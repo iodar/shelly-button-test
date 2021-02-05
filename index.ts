@@ -6,7 +6,8 @@ const server = express()
 
 // Server starten, hört auf Port 3000 und erzeugt Lognachricht, wenn der Server gestartet ist
 server.listen(env.server.port, () => console.log(`Server started and listening to port ${env.server.port}`))
-
+// disable default headers
+server.disable('x-powered-by')
 
 //
 // --- WEB HANDLER handling Requests to this server ----
