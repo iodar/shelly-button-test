@@ -14,22 +14,22 @@ server.listen(env.server.port, () => console.log(`Server started and listening t
 
 // Verarbeitet GET Anfragen an den REST-Endpunkt `/button/short/1`
 server.get("/button/short/1", (_: Request, res: Response) => {
-    handleRequestAndSendMessage(res, "short url 1")
+    handleRequestSendMessageAndLog(res, "short url 1")
 })
 
 // Verarbeitet GET Anfragen an den REST-Endpunkt `/button/short/2`
 server.get("/button/short/2", (_: Request, res: Response) => {
-    handleRequestAndSendMessage(res, "short url 2")
+    handleRequestSendMessageAndLog(res, "short url 2")
 })
 
 // Verarbeitet GET Anfragen an den REST-Endpunkt `/button/short/3`
 server.get("/button/short/3", (_: Request, res: Response) => {
-    handleRequestAndSendMessage(res, "short url 3")
+    handleRequestSendMessageAndLog(res, "short url 3")
 })
 
 // Verarbeitet GET Anfragen an den REST-Endpunkt `/button/long/1`
 server.get("/button/long/1", (_: Request, res: Response) => {
-    handleRequestAndSendMessage(res, "long url 1")
+    handleRequestSendMessageAndLog(res, "long url 1")
 })
 
 /**
@@ -38,8 +38,14 @@ server.get("/button/long/1", (_: Request, res: Response) => {
  * @param res Antwort Objekt des Express Webserver
  * @param urlName Name der URL, die in der Antwort angezeigt wird
  */
-function handleRequestAndSendMessage(res: Response, urlName: string) {
+function handleRequestSendMessageAndLog(res: Response, urlName: string) {
     const message = `'${urlName}' was called`
-    console.log(`SERVER: ${message}`)
+    if (isLogEnabled()) {
+        console.log(`SERVER: ${message}`)
+    }
     res.status(200).json({ message })
+}
+
+function isLogEnabled() {
+    return env.enableLog === "true"
 }
