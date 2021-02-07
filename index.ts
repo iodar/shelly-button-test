@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express"
 import chalk from "chalk";
 import env from "./env"
-import { requestButtonStatus } from "./button-request";
+import { requestButtonsBatteryStatus } from "./button-request";
 
 // Erzeugt eine Express Server Applikation (Web Server)
 const server = express()
@@ -62,10 +62,20 @@ async function logRequestToStdOut(req: Request, message: string) {
     console.log(`${chalk.yellow(currentTimeAsIso)} ${chalk.blue("SERVER:")} ${chalk.green("Shelly status (")}${chalk.yellowBright(shellyButtonIp)}${chalk.green(")")} => ${chalk.blueBright(`Battery ${batteryStatus.bat.value}% and ${batteryStatus.bat.voltage} Volts`)}`);
 }
 
+/**
+ * Sends request to get battery status of the Shelly Button1
+ * that should requested a resource on this server.
+ * @param url Ip Address of the Shelly Button1
+ */
 async function requestButtonBattery(url: string) {
-    return requestButtonStatus(url)
+    return requestButtonsBatteryStatus(url)
 }
 
+/**
+ * Extracts the IPv4 address from the ip property
+ * of the express request object.
+ * @param req express request object
+ */
 function extractIpFrom(req: Request) {
     return req.ip.replace(/^::ffff:/, "")
 }
