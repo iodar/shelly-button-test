@@ -9,6 +9,7 @@
   "devDependencies": {
     "@types/express": "^4.17.11",
     "@types/node": "^14.14.25",
+    "chalk": "^4.1.0",
     "cross-env": "^7.0.3",
     "express": "^4.17.1",
     "ts-node": "^9.1.1",
