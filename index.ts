@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express"
+import chalk from "chalk";
 import env from "./env"
 
 // Erzeugt eine Express Server Applikation (Web Server)
@@ -14,23 +15,23 @@ server.disable('x-powered-by')
 //
 
 // Verarbeitet GET Anfragen an den REST-Endpunkt `/button/short/1`
-server.get("/button/short/1", (_: Request, res: Response) => {
-    handleRequestSendMessageAndLog(res, "short url 1")
+server.get("/button/short/1", (req: Request, res: Response) => {
+    handleRequestSendMessageAndLog(req, res, "short url 1")
 })
 
 // Verarbeitet GET Anfragen an den REST-Endpunkt `/button/short/2`
-server.get("/button/short/2", (_: Request, res: Response) => {
-    handleRequestSendMessageAndLog(res, "short url 2")
+server.get("/button/short/2", (req: Request, res: Response) => {
+    handleRequestSendMessageAndLog(req, res, "short url 2")
 })
 
 // Verarbeitet GET Anfragen an den REST-Endpunkt `/button/short/3`
-server.get("/button/short/3", (_: Request, res: Response) => {
-    handleRequestSendMessageAndLog(res, "short url 3")
+server.get("/button/short/3", (req: Request, res: Response) => {
+    handleRequestSendMessageAndLog(req, res, "short url 3")
 })
 
 // Verarbeitet GET Anfragen an den REST-Endpunkt `/button/long/1`
-server.get("/button/long/1", (_: Request, res: Response) => {
-    handleRequestSendMessageAndLog(res, "long url 1")
+server.get("/button/long/1", (req: Request, res: Response) => {
+    handleRequestSendMessageAndLog(req, res, "long url 1")
 })
 
 /**
@@ -39,14 +40,28 @@ server.get("/button/long/1", (_: Request, res: Response) => {
  * @param res Antwort Objekt des Express Webserver
  * @param urlName Name der URL, die in der Antwort angezeigt wird
  */
-function handleRequestSendMessageAndLog(res: Response, urlName: string) {
+function handleRequestSendMessageAndLog(req: Request, res: Response, urlName: string) {
     const message = `'${urlName}' was called`
     if (isLogEnabled()) {
-        console.log(`SERVER: ${message}`)
+        logRequestToStdOut(req, message);
     }
     res.status(200).json({ message })
 }
 
+/**
+ * Loggt eine farbige Nachricht nach `STDOUT`.
+ * @param req Express Anfrageobjekt
+ * @param message Nachricht, die in der Lognachricht angezeigt werden soll
+ */
+function logRequestToStdOut(req: Request, message: string) {
+    const headersAsJson = JSON.stringify(req.headers);
+    const currentTimeAsIso = new Date().toISOString();
+    console.log(`${chalk.yellow(currentTimeAsIso)} ${chalk.blue("SERVER:")} ${chalk.green(message)} => ${headersAsJson}`);
+}
+
+/**
+ * Prüft, ob die Anwendung loggen soll.
+ */
 function isLogEnabled() {
     return env.enableLog === "true"
 }
