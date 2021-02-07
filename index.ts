@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express"
 import chalk from "chalk";
 import env from "./env"
+import { requestButtonStatus } from "./button-request";
 
 // Erzeugt eine Express Server Applikation (Web Server)
 const server = express()
@@ -53,10 +54,20 @@ function handleRequestSendMessageAndLog(req: Request, res: Response, urlName: st
  * @param req Express Anfrageobjekt
  * @param message Nachricht, die in der Lognachricht angezeigt werden soll
  */
-function logRequestToStdOut(req: Request, message: string) {
-    const headersAsJson = JSON.stringify(req.headers);
+async function logRequestToStdOut(req: Request, message: string) {
+    const shellyButtonIp = extractIpFrom(req)
     const currentTimeAsIso = new Date().toISOString();
-    console.log(`${chalk.yellow(currentTimeAsIso)} ${chalk.blue("SERVER:")} ${chalk.green(message)} => ${headersAsJson}`);
+    console.log(`${chalk.yellow(currentTimeAsIso)} ${chalk.blue("SERVER:")} ${chalk.green(message)} from ${chalk.magenta(shellyButtonIp)}`);
+    const batteryStatus = await requestButtonBattery(shellyButtonIp)
+    console.log(`${chalk.yellow(currentTimeAsIso)} ${chalk.blue("SERVER:")} ${chalk.green("Shelly status (")}${chalk.yellowBright(shellyButtonIp)}${chalk.green(")")} => ${chalk.blueBright(`Battery ${batteryStatus.bat.value}% and ${batteryStatus.bat.voltage} Volts`)}`);
+}
+
+async function requestButtonBattery(url: string) {
+    return requestButtonStatus(url)
+}
+
+function extractIpFrom(req: Request) {
+    return req.ip.replace(/^::ffff:/, "")
 }
 
 /**
